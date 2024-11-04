@@ -1,0 +1,32 @@
+name: Manage Issues
+
+on:
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+jobs:
+  create_and_close_issues:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      - name: Install GitHub CLI
+        run: sudo apt-get install gh
+
+      - name: Authenticate with GitHub CLI
+        run: echo "${{ secrets.GH_PAT }}" | gh auth login --with-token
+
+      - name: Create Issues
+        run: |
+          for i in $(seq 1 500); do
+            gh issue create --title "Automated Issue #$i" --body "This is an automatically generated issue." --repo eschan145/farm
+            echo "Created issue #$i"
+          done
+
+      - name: Close Issues
+        run: |
+          for i in $(seq 1 500); do
+            gh issue close $i --repo eschan145/farm
+            echo "Closed issue #$i"
+          done
